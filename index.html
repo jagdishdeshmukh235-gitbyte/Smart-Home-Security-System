@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Security System IoT Dashboard</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- HEADER SECTION -->
+        <header class="main-header">
+            <div class="header-left">
+                <div class="logo-area">
+                    <i data-lucide="shield-check" class="logo-icon"></i>
+                    <div>
+                        <h1>Smart Home Security System</h1>
+                        <p class="subtitle">ESP32 IoT Controller Node</p>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="system-status">
+                    <span class="status-indicator online"></span>
+                    <span class="status-text" id="system-status-badge">System Online</span>
+                </div>
+                <div class="clock-display">
+                    <i data-lucide="clock"></i>
+                    <span id="current-time">00:00:00 AM</span>
+                    <span class="date-divider">|</span>
+                    <span id="current-date">May 29, 2026</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD GRID LAYOUT -->
+        <main class="dashboard-grid">
+
+            <!-- LEFT/CENTER COLUMN: IoT Connectivity, Sensors, and Door Lock -->
+            <section class="dashboard-column col-main">
+                
+                <!-- IOT CONNECTIVITY PANEL -->
+                <div class="dashboard-card card-connectivity">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="wifi"></i>
+                            <h3>IoT Node Connectivity</h3>
+                        </div>
+                        <div class="mode-toggles">
+                            <div class="btn-mode live-active" id="btn-esp32-status" style="cursor: default; pointer-events: none;">
+                                <i data-lucide="radio" class="pulse-indicator live"></i> ESP32 Live
+                            </div>
+                            <button id="btn-config-esp32" class="btn-config">
+                                <i data-lucide="settings"></i> Configure ESP32
+                            </button>
+                        </div>
+                    </div>
+                    <div class="connectivity-stats">
+                        <div class="conn-item">
+                            <span class="label">ESP32 Status</span>
+                            <span class="value val-status text-green" id="esp32-status">Connected</span>
+                        </div>
+                        <div class="conn-item">
+                            <span class="label">ESP32 IP</span>
+                            <span class="value" id="esp32-ip-display">192.168.1.100</span>
+                        </div>
+                        <div class="conn-item">
+                            <span class="label">WiFi Status</span>
+                            <div class="signal-wrapper">
+                                <span class="value" id="wifi-status-text">Connected</span>
+                                <div class="wifi-bars" id="wifi-bars">
+                                    <div class="bar bar-1 active"></div>
+                                    <div class="bar bar-2 active"></div>
+                                    <div class="bar bar-3 active"></div>
+                                    <div class="bar bar-4 active"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="conn-item">
+                            <span class="label">Last Updated</span>
+                            <span class="value" id="last-updated">Just Now</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SENSOR MONITORING CARDS -->
+                <div class="sensor-cards-grid">
+                    
+                    <!-- MQ2 GAS SENSOR -->
+                    <div class="dashboard-card card-sensor" id="card-mq2">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i data-lucide="wind" class="icon-mq2"></i>
+                                <h3>MQ2 Gas Sensor</h3>
+                            </div>
+                            <span class="badge badge-safe" id="mq2-badge">Safe</span>
+                        </div>
+                        <div class="sensor-body">
+                            <!-- Gauge Visual -->
+                            <div class="gauge-container">
+                                <svg class="gauge" viewBox="0 0 100 50">
+                                    <path class="gauge-bg" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke-width="8"></path>
+                                    <path class="gauge-fill" id="mq2-gauge-fill" d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke-width="8" stroke-dasharray="125.6" stroke-dashoffset="125.6"></path>
+                                </svg>
+                                <div class="gauge-value">
+                                    <span class="num" id="mq2-value">124</span>
+                                    <span class="unit">PPM</span>
+                                </div>
+                            </div>
+                            <div class="sensor-footer">
+                                <span class="label">Status:</span>
+                                <span class="value font-semibold text-green" id="mq2-status-text">Normal Air Quality</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FLAME SENSOR -->
+                    <div class="dashboard-card card-sensor" id="card-flame">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i data-lucide="flame" class="icon-flame"></i>
+                                <h3>Flame Sensor</h3>
+                            </div>
+                            <span class="badge badge-safe" id="flame-badge">No Fire</span>
+                        </div>
+                        <div class="sensor-body flex-center">
+                            <div class="sensor-graphic">
+                                <div class="flame-icon-wrapper" id="flame-wrapper">
+                                    <i data-lucide="flame" class="flame-big"></i>
+                                    <span class="flame-pulse-ring"></span>
+                                </div>
+                            </div>
+                            <div class="sensor-footer">
+                                <span class="label">Status:</span>
+                                <span class="value font-semibold text-green" id="flame-status-text">Environment Clear</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VIBRATION SENSOR -->
+                    <div class="dashboard-card card-sensor" id="card-vibration">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i data-lucide="activity" class="icon-vibration"></i>
+                                <h3>Vibration Sensor</h3>
+                            </div>
+                            <span class="badge badge-safe" id="vibration-badge">Safe</span>
+                        </div>
+                        <div class="sensor-body flex-center">
+                            <div class="sensor-graphic">
+                                <div class="vibration-icon-wrapper" id="vibration-wrapper">
+                                    <i data-lucide="shield" class="vibration-big"></i>
+                                    <span class="vibration-ripple"></span>
+                                </div>
+                            </div>
+                            <div class="sensor-footer">
+                                <span class="label">Status:</span>
+                                <span class="value font-semibold text-green" id="vibration-status-text">No Intrusion Detected</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- SMART DOOR LOCK SECTION -->
+                <div class="dashboard-card card-door-lock">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="lock"></i>
+                            <h3>Smart Door Lock System</h3>
+                        </div>
+                        <div class="door-status-badge">
+                            <span class="badge badge-locked" id="door-badge"><i data-lucide="lock-keyhole"></i> Locked</span>
+                        </div>
+                    </div>
+                    <div class="door-lock-container">
+                        
+                        <!-- Lock Visual Representation -->
+                        <div class="lock-visual-panel">
+                            <div class="lock-graphic-container" id="lock-graphic">
+                                <div class="lock-base">
+                                    <i data-lucide="lock" class="lock-icon" id="main-lock-icon"></i>
+                                    <div class="servo-angle-display">
+                                        <div class="servo-gauge">
+                                            <div class="servo-hand" id="servo-hand"></div>
+                                        </div>
+                                        <span class="servo-value">Servo: <strong id="servo-angle">0°</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lock-state-indicators">
+                                <div class="indicator-item">
+                                    <span class="label">Lock State:</span>
+                                    <span class="value text-red font-semibold" id="door-lock-status">Locked</span>
+                                </div>
+                                <div class="indicator-item">
+                                    <span class="label">Servo Angle:</span>
+                                    <span class="value" id="door-servo-status">0° (Lock Mode)</span>
+                                </div>
+                                <div class="indicator-item">
+                                    <span class="label">Last Authentication:</span>
+                                    <span class="value font-mono" id="door-last-auth">N/A</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Keypad Pin Code -->
+                        <div class="keypad-panel">
+                            <div class="keypad-header">
+                                <span class="label">Enter Access Password</span>
+                                <div class="keypad-display" id="keypad-display">••••</div>
+                            </div>
+                            <div class="keypad-grid">
+                                <button class="btn-key" data-val="1">1</button>
+                                <button class="btn-key" data-val="2">2</button>
+                                <button class="btn-key" data-val="3">3</button>
+                                <button class="btn-key" data-val="4">4</button>
+                                <button class="btn-key" data-val="5">5</button>
+                                <button class="btn-key" data-val="6">6</button>
+                                <button class="btn-key" data-val="7">7</button>
+                                <button class="btn-key" data-val="8">8</button>
+                                <button class="btn-key" data-val="9">9</button>
+                                <button class="btn-key btn-danger-action" id="btn-key-clear" data-val="clear"><i data-lucide="x"></i></button>
+                                <button class="btn-key" data-val="0">0</button>
+                                <button class="btn-key btn-success-action" id="btn-key-enter" data-val="enter"><i data-lucide="check"></i></button>
+                            </div>
+                            <div class="keypad-hints">
+                                <span>Default PIN: <strong class="text-blue">9608</strong></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+            </section>
+
+            <!-- RIGHT COLUMN: Stats, Live Logs, and Charts -->
+            <section class="dashboard-column col-side">
+                
+                <!-- STATISTICS PANEL -->
+                <div class="stats-grid">
+                    <div class="stat-card" id="stat-total">
+                        <div class="stat-icon-wrapper">
+                            <i data-lucide="shield-alert"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-num" id="stat-val-total">0</span>
+                            <span class="stat-label">Total Alerts Today</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="stat-gas">
+                        <div class="stat-icon-wrapper">
+                            <i data-lucide="wind"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-num" id="stat-val-gas">0</span>
+                            <span class="stat-label">Gas Events</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="stat-fire">
+                        <div class="stat-icon-wrapper">
+                            <i data-lucide="flame"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-num" id="stat-val-fire">0</span>
+                            <span class="stat-label">Fire Events</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="stat-vibe">
+                        <div class="stat-icon-wrapper">
+                            <i data-lucide="activity"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-num" id="stat-val-vibe">0</span>
+                            <span class="stat-label">Intrusion Events</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REAL-TIME CHARTS AND ANALYTICS -->
+                <div class="dashboard-card card-analytics">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="trending-up"></i>
+                            <h3>Real-Time Gas Sensor Analysis</h3>
+                        </div>
+                        <span class="pulse-indicator live"></span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="gasChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="dashboard-card card-analytics">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="bar-chart-3"></i>
+                            <h3>Sensor Incident Statistics</h3>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- ALERT HISTORY PANEL -->
+                <div class="dashboard-card card-alerts">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="bell"></i>
+                            <h3>Live Security Alerts Log</h3>
+                        </div>
+                        <div class="alert-actions">
+                            <button id="btn-sound-toggle" class="btn-icon" title="Toggle Sound Notifications">
+                                <i data-lucide="volume-2" id="sound-icon"></i>
+                            </button>
+                            <button id="btn-clear-logs" class="btn-icon-danger" title="Clear Event Logs">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="logs-container" id="logs-container">
+                        <!-- Log messages are generated dynamically -->
+                        <div class="log-empty-state" id="log-empty-msg">
+                            <i data-lucide="info"></i>
+                            <p>No alerts logged. System is operating normally.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ESP32 CONFIGURATION MODAL -->
+    <div class="modal-overlay" id="esp32-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i data-lucide="settings"></i>
+                    <h2>ESP32 Connection Settings</h2>
+                </div>
+                <button class="btn-modal-close" id="btn-modal-close"><i data-lucide="x"></i></button>
+            </div>
+            <form id="esp32-config-form">
+                <div class="form-body">
+                    <div class="alert-tip">
+                        <i data-lucide="help-circle"></i>
+                        <p>Configure your ESP32 IP Address below to connect directly to the security system node.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="esp32-ip-address">ESP32 IP Address</label>
+                        <input type="text" id="esp32-ip-address" placeholder="e.g., 192.168.1.100" class="form-control font-mono" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="btn-modal-cancel">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Configuration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Alert Sound Element (Low volume synthetic chime for warnings, siren for fire) -->
+    <audio id="alert-chime" preload="auto" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav"></audio>
+    <audio id="alert-siren" preload="auto" loop src="https://assets.mixkit.co/active_storage/sfx/950/950-84.wav"></audio>
+
+    <script src="app.js"></script>
+</body>
+</html>
